@@ -1,5 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ui/src/widget/header.dart';
+import 'dart:math' as Math;
 
 class AnimationPage extends StatelessWidget {
   const AnimationPage({Key key}) : super(key: key);
@@ -27,6 +28,10 @@ class _CuadradoAnimadoState extends State<CuadradoAnimado>
     with SingleTickerProviderStateMixin {
   AnimationController animationController;
   Animation<double> rotacion;
+  Animation<double> opacidad;
+  Animation<double> opacidadOut;
+  Animation<double> mover;
+  Animation<double> agrandar;
 
   @override
   void initState() {
@@ -34,7 +39,46 @@ class _CuadradoAnimadoState extends State<CuadradoAnimado>
     animationController = new AnimationController(
         vsync: this, duration: Duration(milliseconds: 4000));
 
-    rotacion = Tween(begin: 0.0, end: 2.0).animate(animationController);
+    rotacion = Tween(begin: 0.0, end: 2 * Math.pi).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: Curves.easeOut,
+      ),
+    );
+
+    opacidad = Tween(begin: 0.1, end: 1.0).animate(CurvedAnimation(
+      parent: animationController,
+      curve: Interval(0, 0.25, curve: Curves.easeOut),
+    ));
+
+    opacidadOut = Tween(begin: 0.1, end: 1.0).animate(CurvedAnimation(
+      parent: animationController,
+      curve: Interval(0.75, 1.0, curve: Curves.easeOut),
+    ));
+
+    mover = Tween(begin: 0.0, end: 200.0).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: Curves.easeOut,
+      ),
+    );
+
+    agrandar = Tween(begin: 0.0, end: 2.0).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: Curves.easeOut,
+      ),
+    );
+
+    animationController.addListener(() {
+      final status = animationController.status;
+      switch (status) {
+        case AnimationStatus.completed:
+          animationController.reverse();
+          break;
+        default:
+      }
+    });
 
     super.initState();
   }
@@ -47,16 +91,24 @@ class _CuadradoAnimadoState extends State<CuadradoAnimado>
 
   @override
   Widget build(BuildContext context) {
-
     animationController.forward();
 
     return AnimatedBuilder(
       animation: animationController,
+      child: _Rectangulo(),
       builder: (BuildContext context, Widget child) {
-        print('Valor: ' + rotacion.value.toString());
-        return Transform.rotate(
-          angle: rotacion.value,
-          child: _Rectangulo(),
+        return Transform.translate(
+          offset: Offset(mover.value, 0),
+          child: Transform.rotate(
+            angle: rotacion.value,
+            child: Opacity(
+              opacity: opacidad.value - opacidadOut.value,
+              child: Transform.scale(
+                scale: agrandar.value,
+                child: child,
+              ),
+            ),
+          ),
         );
       },
     );
