@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ui/src/pages/pinterest_page.dart';
+import 'package:flutter_ui/src/pages/emergency_page.dart';
+// import 'package:flutter_ui/src/pages/pinterest_page.dart';
 // import 'package:flutter_ui/src/pages/graficas_pages.dart';
 // import 'package:flutter_ui/src/pages/slideshow_page.dart';
 // import 'package:flutter_ui/src/pages/slidesshow_page.dart';
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: PinterestPage()
+      home: EmergencyPage()
     );
   }
 }
